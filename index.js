@@ -5,7 +5,7 @@ var nodeStatic = require('node-static');
 var http = require('http');
 var socketIO = require('socket.io');
 
-var PORT = process.env.PORT || 8080;
+var PORT = process.env.PORT || 8000;
 var fileServer = new(nodeStatic.Server)();
 var app = http.createServer(function(req, res) {
     fileServer.serve(req, res);
