@@ -157,11 +157,8 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    if (location.hostname !== 'localhost') {
-  pc = new RTCPeerConnection(pcConfig);
-} else {
-  pc = new RTCPeerConnection(null);
-} 
+ 
+    pc = new RTCPeerConnection(pcConfig); 
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
