@@ -9,7 +9,7 @@ var remoteStream;
 var turnReady;
 
 var pcConfig = {
-      'iceServers': [
+  'iceServers': [
     {
       'urls': 'stun:stun.l.google.com:19302'
     },
@@ -17,14 +17,15 @@ var pcConfig = {
       'urls': 'turn:192.158.29.39:3478?transport=udp',
       'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
       'username': '28224511:1379330808'
-  },
-  {
+    },
+    {
       'urls': 'turn:192.158.29.39:3478?transport=tcp',
       'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
       'username': '28224511:1379330808'
-   }
+    }
   ]
 };
+
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {
   offerToReceiveAudio: true,
@@ -66,9 +67,10 @@ socket.on('joined', function(room) {
 
 socket.on('log', function(array) {
   console.log.apply(console, array);
-  });
- 
+});
+
 ////////////////////////////////////////////////
+
 function sendMessage(message) {
   console.log('Client sending message: ', message);
   socket.emit('message', message);
@@ -104,7 +106,7 @@ var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
 navigator.mediaDevices.getUserMedia({
-  audio: false,
+  audio: true,
   video: true
 })
 .then(gotStream)
@@ -118,24 +120,29 @@ function gotStream(stream) {
   localVideo.srcObject = stream;
   sendMessage('got user media');
   if (isInitiator) {
-    maybeStart()
-	  }
+    maybeStart();
+  }
 }
 
 var constraints = {
+  audio: true,
   video: true
 };
 
 console.log('Getting user media with constraints', constraints);
 
-
+if (location.hostname !== 'localhost') {
+  requestTurn(
+    'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913'
+  );
+}
 
 function maybeStart() {
   console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
   if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
     console.log('>>>>>> creating peer connection');
     createPeerConnection();
-    pc.addTrack(localStream);
+    pc.addStream(localStream);
     isStarted = true;
     console.log('isInitiator', isInitiator);
     if (isInitiator) {
@@ -146,15 +153,19 @@ function maybeStart() {
 
 window.onbeforeunload = function() {
   sendMessage('bye');
-  };
+};
 
 /////////////////////////////////////////////////////////
 
 function createPeerConnection() {
-	  try {
-  pc = new RTCPeerConnection(pcConfig);
+  try {
+    if (location.hostname !== 'localhost') {
+      pc = new RTCPeerConnection(pcConfig);
+    } else {
+      pc = new RTCPeerConnection(null);
+    }
     pc.onicecandidate = handleIceCandidate;
-    pc.onaddtrack = handleRemoteStreamAdded;
+    pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
     console.log('Created RTCPeerConnnection');
   } catch (e) {
@@ -175,7 +186,7 @@ function handleIceCandidate(event) {
     });
   } else {
     console.log('End of candidates.');
-	}
+  }
 }
 
 function handleCreateOfferError(event) {
@@ -206,7 +217,7 @@ function onCreateSessionDescriptionError(error) {
 }
 
 function requestTurn(turnURL) {
-  var turnExists = true;
+  var turnExists = false;
   for (var i in pcConfig.iceServers) {
     if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
       turnExists = true;
@@ -227,17 +238,17 @@ function requestTurn(turnURL) {
           'credential': turnServer.password
         });
         turnReady = true;
-		      }
+      }
     };
     xhr.open('GET', turnURL, true);
     xhr.send();
-	  }
+  }
 }
 
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
   remoteStream = event.stream;
-  remoteVideo.srcObject = remoteStream;
+  remoteVideo.srcObject = event.stream;
 }
 
 function handleRemoteStreamRemoved(event) {
@@ -254,7 +265,7 @@ function handleRemoteHangup() {
   console.log('Session terminated.');
   stop();
   isInitiator = false;
-  }
+}
 
 function stop() {
   isStarted = false;
