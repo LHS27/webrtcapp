@@ -23,7 +23,7 @@
 
   // note: make sure hostname available to all connecting clients
   // (ie. probably not `localhost`)
-  rtc.connect('ws://yourserveraddress:8001');
+  rtc.connect('https://appwebrtchandb.herokuapp.com/');
 
   rtc.createStream({"video": true, "audio":false}, function(stream){
     // get local stream for manipulation
