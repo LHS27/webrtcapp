@@ -215,7 +215,7 @@ function onCreateSessionDescriptionError(error) {
 }
 
 function requestTurn(turnURL) {
-  var turnExists = false;
+  var turnExists = true;
   for (var i in pcConfig.iceServers) {
     if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
       turnExists = true;
