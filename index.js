@@ -5,12 +5,10 @@ var nodeStatic = require('node-static');
 var http = require('http');
 var socketIO = require('socket.io');
 
-var PORT = process.env.PORT || 8000;
 var fileServer = new(nodeStatic.Server)();
 var app = http.createServer(function(req, res) {
-    fileServer.serve(req, res);
-}).listen(PORT);
-
+  fileServer.serve(req, res);
+}).listen(8080);
 
 var io = socketIO.listen(app);
 io.sockets.on('connection', function(socket) {
@@ -24,8 +22,8 @@ io.sockets.on('connection', function(socket) {
 
   socket.on('message', function(message) {
     log('Client said: ', message);
-    // for a real app, would be room-only (not broadcast) 
-    socket.broadcast.emit('message', message);
+    // for a real app, would be room-only (not broadcast)
+    socket.room-only.emit('message', message);
   });
 
   socket.on('create or join', function(room) {
