@@ -1,153 +1,267 @@
-// cope with browser differences
-let audioContext;
-if (typeof AudioContext === 'function') {
-  audioContext = new AudioContext();
-} else if (typeof webkitAudioContext === 'function') {
-  audioContext = new webkitAudioContext(); // eslint-disable-line new-cap
-} else {
-  console.log('Sorry! Web Audio not supported.');
+'use strict';
+
+var isChannelReady = false;
+var isInitiator = false;
+var isStarted = false;
+var localStream;
+var pc;
+var remoteStream;
+var turnReady;
+
+var pcConfig = {
+      'iceServers': [
+    {
+      'urls': 'stun:stun.l.google.com:19302'
+    },
+    {
+      'urls': 'turn:192.158.29.39:3478?transport=udp',
+      'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+      'username': '28224511:1379330808'
+  },
+  {
+      'urls': 'turn:192.158.29.39:3478?transport=tcp',
+      'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
+      'username': '28224511:1379330808'
+   }
+  ]
+};
+// Set up audio and video regardless of what devices are present.
+var sdpConstraints = {
+  offerToReceiveAudio: true,
+  offerToReceiveVideo: true
+};
+
+/////////////////////////////////////////////
+
+var room = 'foo';
+// Could prompt for room name:
+// room = prompt('Enter room name:');
+
+var socket = io.connect();
+
+if (room !== '') {
+  socket.emit('create or join', room);
+  console.log('Attempted to create or  join room', room);
 }
 
-// create a filter node
-var filterNode = audioContext.createBiquadFilter();
-// see https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#BiquadFilterNode-section
-filterNode.type = 'highpass';
-// cutoff frequency: for highpass, audio is attenuated below this frequency
-filterNode.frequency.value = 10000;
-
-// create a gain node (to change audio volume)
-var gainNode = audioContext.createGain();
-// default is 1 (no change); less than 1 means audio is attenuated
-// and vice versa
-gainNode.gain.value = 0.5;
-
-navigator.mediaDevices.getUserMedia({audio: true}, (stream) => {
-  // Create an AudioNode from the stream
-  const mediaStreamSource =
-    audioContext.createMediaStreamSource(stream);
-  mediaStreamSource.connect(filterNode);
-  filterNode.connect(gainNode);
-  // connect the gain node to the destination (i.e. play the sound)
-  gainNode.connect(audioContext.destination);
+socket.on('created', function(room) {
+  console.log('Created room ' + room);
+  isInitiator = true;
 });
-// handles JSON.stringify/parse
-const signaling = new SignalingChannel();
-const constraints = {audio: true, video: true};
-const configuration = {iceServers: [{urls: 'stuns:stun.example.org'}]};
-const pc = new RTCPeerConnection(configuration);
 
-// send any ice candidates to the other peer
-pc.onicecandidate = ({candidate}) => signaling.send({candidate});
+socket.on('full', function(room) {
+  console.log('Room ' + room + ' is full');
+});
 
-// let the "negotiationneeded" event trigger offer generation
-pc.onnegotiationneeded = async () => {
-  try {
-    await pc.setLocalDescription(await pc.createOffer());
-    // send the offer to the other peer
-    signaling.send({desc: pc.localDescription});
-  } catch (err) {
-    console.error(err);
-  }
-};
+socket.on('join', function (room){
+  console.log('Another peer made a request to join room ' + room);
+  console.log('This peer is the initiator of room ' + room + '!');
+  isChannelReady = true;
+});
 
-// once remote track media arrives, show it in remote video element
-pc.ontrack = (event) => {
-  // don't set srcObject again if it is already set.
-  if (remoteView.srcObject) return;
-  remoteView.srcObject = event.streams[0];
-};
+socket.on('joined', function(room) {
+  console.log('joined: ' + room);
+  isChannelReady = true;
+});
 
-// call start() to initiate
-async function start() {
-  try {
-    // get local stream, show it in self-view and add it to be sent
-    const stream =
-      await navigator.mediaDevices.getUserMedia(constraints);
-    stream.getTracks().forEach((track) =>
-      pc.addTrack(track, stream));
-    selfView.srcObject = stream;
-  } catch (err) {
-    console.error(err);
-  }
+socket.on('log', function(array) {
+  console.log.apply(console, array);
+  });
+ 
+////////////////////////////////////////////////
+function sendMessage(message) {
+  console.log('Client sending message: ', message);
+  socket.emit('message', message);
 }
 
-signaling.onmessage = async ({desc, candidate}) => {
-  try {
-    if (desc) {
-      // if we get an offer, we need to reply with an answer
-      if (desc.type === 'offer') {
-        await pc.setRemoteDescription(desc);
-        const stream =
-          await navigator.mediaDevices.getUserMedia(constraints);
-        stream.getTracks().forEach((track) =>
-          pc.addTrack(track, stream));
-        await pc.setLocalDescription(await pc.createAnswer());
-        signaling.send({desc: pc.localDescription});
-      } else if (desc.type === 'answer') {
-        await pc.setRemoteDescription(desc);
-      } else {
-        console.log('Unsupported SDP type.');
-      }
-    } else if (candidate) {
-      await pc.addIceCandidate(candidate);
+// This client receives a message
+socket.on('message', function(message) {
+  console.log('Client received message:', message);
+  if (message === 'got user media') {
+    maybeStart();
+  } else if (message.type === 'offer') {
+    if (!isInitiator && !isStarted) {
+      maybeStart();
     }
-  } catch (err) {
-    console.error(err);
+    pc.setRemoteDescription(new RTCSessionDescription(message));
+    doAnswer();
+  } else if (message.type === 'answer' && isStarted) {
+    pc.setRemoteDescription(new RTCSessionDescription(message));
+  } else if (message.type === 'candidate' && isStarted) {
+    var candidate = new RTCIceCandidate({
+      sdpMLineIndex: message.label,
+      candidate: message.candidate
+    });
+    pc.addIceCandidate(candidate);
+  } else if (message === 'bye' && isStarted) {
+    handleRemoteHangup();
   }
-};
-v=0
-o=- 3883943731 1 IN IP4 127.0.0.1
-s=
-t=0 0
-a=group:BUNDLE audio video
-m=audio 1 RTP/SAVPF 103 104 0 8 106 105 13 126
-
-// ...
-
-a=ssrc:2223794119 label:H4fjnMzxy3dPIgQ7HxuCTLb4wLLLeRHnFxh810
-
-// servers is an optional config file (see TURN and STUN discussion below)
-pc1 = new RTCPeerConnection(servers);
-// ...
-localStream.getTracks().forEach((track) => {
-  pc1.addTrack(track, localStream);
 });
-pc1.setLocalDescription(desc).then(() => {
-      onSetLocalSuccess(pc1);
-    },
-    onSetSessionDescriptionError
-  );
-  trace('pc2 setRemoteDescription start');
-  pc2.setRemoteDescription(desc).then(() => {
-      onSetRemoteSuccess(pc2);
-    },
-    onSetSessionDescriptionError
-  );
-  pc2 = new RTCPeerConnection(servers);
-pc2.ontrack = gotRemoteStream;
-//...
-function gotRemoteStream(e){
-  vid2.srcObject = e.stream;
-}
-const localConnection = new RTCPeerConnection(servers);
-const remoteConnection = new RTCPeerConnection(servers);
-const sendChannel =
-  localConnection.createDataChannel('sendDataChannel');
 
-// ...
+////////////////////////////////////////////////////
 
-remoteConnection.ondatachannel = (event) => {
-  receiveChannel = event.channel;
-  receiveChannel.onmessage = onReceiveMessage;
-  receiveChannel.onopen = onReceiveChannelStateChange;
-  receiveChannel.onclose = onReceiveChannelStateChange;
-};
+var localVideo = document.querySelector('#localVideo');
+var remoteVideo = document.querySelector('#remoteVideo');
 
-function onReceiveMessage(event) {
-  document.querySelector("textarea#send").value = event.data;
+navigator.mediaDevices.getUserMedia({
+  audio: false,
+  video: true
+})
+.then(gotStream)
+.catch(function(e) {
+  alert('getUserMedia() error: ' + e.name);
+});
+
+function gotStream(stream) {
+  console.log('Adding local stream.');
+  localStream = stream;
+  localVideo.srcObject = stream;
+  sendMessage('got user media');
+  if (isInitiator) {
+    maybeStart()
+	  }
 }
 
-document.querySelector("button#send").onclick = () => {
-  var data = document.querySelector("textarea#send").value;
-  sendChannel.send(data);
+var constraints = {
+  video: true
 };
+
+console.log('Getting user media with constraints', constraints);
+
+if (location.hostname !== 'localhost') {
+  requestTurn(
+    'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913'
+  );
+}
+
+function maybeStart() {
+  console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
+  if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
+    console.log('>>>>>> creating peer connection');
+    createPeerConnection();
+    pc.addTrack(localStream);
+    isStarted = true;
+    console.log('isInitiator', isInitiator);
+    if (isInitiator) {
+      doCall();
+    }
+  }
+}
+
+window.onbeforeunload = function() {
+  sendMessage('bye');
+  };
+
+/////////////////////////////////////////////////////////
+
+function createPeerConnection() {
+	  try {
+  pc = new RTCPeerConnection(pcConfig);
+    pc.onicecandidate = handleIceCandidate;
+    pc.onaddtrack = handleRemoteStreamAdded;
+    pc.onremovestream = handleRemoteStreamRemoved;
+    console.log('Created RTCPeerConnnection');
+  } catch (e) {
+    console.log('Failed to create PeerConnection, exception: ' + e.message);
+    alert('Cannot create RTCPeerConnection object.');
+    return;
+  }
+}
+
+function handleIceCandidate(event) {
+  console.log('icecandidate event: ', event);
+  if (event.candidate) {
+    sendMessage({
+      type: 'candidate',
+      label: event.candidate.sdpMLineIndex,
+      id: event.candidate.sdpMid,
+      candidate: event.candidate.candidate
+    });
+  } else {
+    console.log('End of candidates.');
+	}
+}
+
+function handleCreateOfferError(event) {
+  console.log('createOffer() error: ', event);
+}
+
+function doCall() {
+  console.log('Sending offer to peer');
+  pc.createOffer(setLocalAndSendMessage, handleCreateOfferError);
+}
+
+function doAnswer() {
+  console.log('Sending answer to peer.');
+  pc.createAnswer().then(
+    setLocalAndSendMessage,
+    onCreateSessionDescriptionError
+  );
+}
+
+function setLocalAndSendMessage(sessionDescription) {
+  pc.setLocalDescription(sessionDescription);
+  console.log('setLocalAndSendMessage sending message', sessionDescription);
+  sendMessage(sessionDescription);
+}
+
+function onCreateSessionDescriptionError(error) {
+  trace('Failed to create session description: ' + error.toString());
+}
+
+function requestTurn(turnURL) {
+  var turnExists = true;
+  for (var i in pcConfig.iceServers) {
+    if (pcConfig.iceServers[i].urls.substr(0, 5) === 'turn:') {
+      turnExists = true;
+      turnReady = true;
+      break;
+    }
+  }
+  if (!turnExists) {
+    console.log('Getting TURN server from ', turnURL);
+    // No TURN server. Get one from computeengineondemand.appspot.com:
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4 && xhr.status === 200) {
+        var turnServer = JSON.parse(xhr.responseText);
+        console.log('Got TURN server: ', turnServer);
+        pcConfig.iceServers.push({
+          'urls': 'turn:' + turnServer.username + '@' + turnServer.turn,
+          'credential': turnServer.password
+        });
+        turnReady = true;
+		      }
+    };
+    xhr.open('GET', turnURL, true);
+    xhr.send();
+	  }
+}
+
+function handleRemoteStreamAdded(event) {
+  console.log('Remote stream added.');
+  remoteStream = event.stream;
+  remoteVideo.srcObject = remoteStream;
+}
+
+function handleRemoteStreamRemoved(event) {
+  console.log('Remote stream removed. Event: ', event);
+}
+
+function hangup() {
+  console.log('Hanging up.');
+  stop();
+  sendMessage('bye');
+}
+
+function handleRemoteHangup() {
+  console.log('Session terminated.');
+  stop();
+  isInitiator = false;
+  }
+
+function stop() {
+  isStarted = false;
+  pc.close();
+  pc = null;
+}
