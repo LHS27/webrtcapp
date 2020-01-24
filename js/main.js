@@ -140,7 +140,7 @@ function maybeStart() {
   if (!isStarted && typeof localStream !== 'undefined' && isChannelReady) {
     console.log('>>>>>> creating peer connection');
     createPeerConnection();
-    pc.addStream(localStream);
+    pc.addTrack(localStream);
     isStarted = true;
     console.log('isInitiator', isInitiator);
     if (isInitiator) {
@@ -159,7 +159,7 @@ function createPeerConnection() {
   try {
   pc = new RTCPeerConnection(pcConfig);
     pc.onicecandidate = handleIceCandidate;
-    pc.onaddstream = handleRemoteStreamAdded;
+    pc.onaddtrack = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
     console.log('Created RTCPeerConnnection');
   } catch (e) {
