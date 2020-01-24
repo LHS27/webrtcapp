@@ -9,21 +9,9 @@ var remoteStream;
 var turnReady;
 
 var pcConfig = {
-  'iceServers': [
-    {
-      'urls': 'stun:stun.l.google.com:19302'
-    },
-    {
-      'urls': 'turn:192.158.29.39:3478?transport=udp',
-      'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-      'username': '28224511:1379330808'
-    },
-    {
-      'urls': 'turn:192.158.29.39:3478?transport=tcp',
-      'credential': 'JZEOEt2V3Qb0y27GRntt2u2PAYA=',
-      'username': '28224511:1379330808'
-    }
-  ]
+  'iceServers': [{
+    'urls': 'stun:stun.l.google.com:19302'
+  }]
 };
 
 // Set up audio and video regardless of what devices are present.
@@ -106,7 +94,7 @@ var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
 navigator.mediaDevices.getUserMedia({
-  audio: true,
+  audio: false,
   video: true
 })
 .then(gotStream)
@@ -125,7 +113,6 @@ function gotStream(stream) {
 }
 
 var constraints = {
-  audio: true,
   video: true
 };
 
@@ -159,11 +146,7 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    if (location.hostname !== 'localhost') {
-      pc = new RTCPeerConnection(pcConfig);
-    } else {
-      pc = new RTCPeerConnection(null);
-    }
+    pc = new RTCPeerConnection(null);
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
@@ -248,7 +231,7 @@ function requestTurn(turnURL) {
 function handleRemoteStreamAdded(event) {
   console.log('Remote stream added.');
   remoteStream = event.stream;
-  remoteVideo.srcObject = event.stream;
+  remoteVideo.srcObject = remoteStream;
 }
 
 function handleRemoteStreamRemoved(event) {

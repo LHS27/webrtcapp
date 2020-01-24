@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 
 <head>
 
-  <title>Realtime communication with WebRTC</title>
+  <title>WebRTC HBInfo</title>
 
   <link rel="stylesheet" href="/css/main.css" />
 
@@ -12,35 +11,18 @@
 
 <body>
 
-  <h1>Realtime communication with WebRTC</h1>
+  <h1>WebRTC HBInfo</h1>
 
   <div id="videos">
-  <video id="local" autoplay="autoplay"></video>
-  <video id="remote" autoplay="autoplay"></video>
+    <video id="localVideo" autoplay muted playsinline></video>
+    <video id="remoteVideo" autoplay playsinline></video>
   </div>
-<script src="/webrtc.io.js"></script>
-<script>
 
-  // note: make sure hostname available to all connecting clients
-  // (ie. probably not `localhost`)
-  rtc.connect('https://appwebrtchandb.herokuapp.com/');
-
-  rtc.createStream({"video": true, "audio":false}, function(stream){
-    // get local stream for manipulation
-    rtc.attachStream(stream, 'local');
-  });
-
-  rtc.on('add remote stream', function(stream){
-    // show the remote video
-    rtc.attachStream(stream, 'remote');
-  });
-
-  // more rtc callbacks are available
-</script>
-
+  <!-- This file is automatically added/served when running "node index.js". -->
+  <script src="/socket.io/socket.io.js"></script>
   <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
   <script src="js/main.js"></script>
-  
+
 </body>
 
 </html>
