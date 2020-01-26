@@ -7,8 +7,6 @@ var localStream;
 var pc;
 var remoteStream;
 var turnReady;
-var io = socketIO.listen(app);	
-
 
 var pcConfig = {
       'iceServers': [
