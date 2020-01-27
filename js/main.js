@@ -1,5 +1,4 @@
 'use strict';
-var idontthinkthesystemworks;
 var isChannelReady = false;
 var isInitiator = false;
 var isStarted = false;
