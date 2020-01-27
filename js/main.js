@@ -9,7 +9,7 @@ var remoteStream;
 var turnReady;
 
 var pcConfig = {
-  'iceServers': [
+      'iceServers': [
     {
       'urls': 'stun:stun.l.google.com:19302'
     },
@@ -25,7 +25,6 @@ var pcConfig = {
    }
   ]
 };
-
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {
   offerToReceiveAudio: true,
@@ -130,7 +129,11 @@ var constraints = {
 
 console.log('Getting user media with constraints', constraints);
 
-
+if (location.hostname !== 'localhost') {
+  requestTurn(
+    'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913'
+  );
+}
 
 function maybeStart() {
   console.log('>>>>>>> maybeStart() ', isStarted, localStream, isChannelReady);
@@ -154,7 +157,11 @@ window.onbeforeunload = function() {
 
 function createPeerConnection() {
   try {
-    pc = new RTCPeerConnection(pcConfig);
+    if (location.hostname !== 'localhost') {
+  pc = new RTCPeerConnection(pcConfig);
+} else {
+  pc = new RTCPeerConnection(null);
+} 
     pc.onicecandidate = handleIceCandidate;
     pc.onaddstream = handleRemoteStreamAdded;
     pc.onremovestream = handleRemoteStreamRemoved;
