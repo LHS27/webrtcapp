@@ -1,3 +1,4 @@
+{
 body {
   font-family: sans-serif;
 }
@@ -7,9 +8,21 @@ video {
 }
 
 .remote {
-  width = 750px;
-}
+     width: { 
+      min: 1080,
+      ideal: 1920,
+      max: 200,
+    },
+    height: {
+      min: 720,
+      ideal: 1080,
+      max: 1440
+    },
+    facingMode: 'environment'
+  }
+
 
 .local {
   width = 100px;
+}
 }
