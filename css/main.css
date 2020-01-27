@@ -6,10 +6,10 @@ video {
   max-width = 100%;
 }
 
-.local {
+.remote {
   width = 750px;
 }
 
-.remote {
+.local {
   width = 100px;
 }
