@@ -104,6 +104,20 @@ socket.on('message', function(message) {
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 
+var btn = document.querySelector('input');
+
+btn.addEventListener('click', updateBtn);
+
+function updateBtn() {
+  if (btn.value === 'Désactiver la caméra' ) {
+    btn.value = 'Activer la caméra' ;
+    navigator.mediaDevices.getUserMedia.video = false;
+  } else {
+    btn.value = 'Désactiver la caméra' ;
+    navigator.mediaDevices.getUserMedia.video = true;
+
+  }
+}
 navigator.mediaDevices.getUserMedia({
   audio: false,
   video: true
