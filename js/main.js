@@ -105,7 +105,7 @@ var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 var button = document.querySelector('#button');
 
-btn.addEventListener('click', updateBtn);
+button.addEventListener('click', updateBtn);
 
 function updateBtn() {
   if (button.value === 'Arrêter la caméra') {
