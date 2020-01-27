@@ -103,7 +103,19 @@ socket.on('message', function(message) {
 
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
+var button = document.querySelector('#button');
 
+btn.addEventListener('click', updateBtn);
+
+function updateBtn() {
+  if (button.value === 'Arrêter la caméra') {
+    button.value = 'Démarrer la caméra';
+    constraints.video= false;
+  } else {
+    button.value = 'Arrêter la caméra';
+   constraints.video=true;
+  }
+}
 navigator.mediaDevices.getUserMedia({
   audio: false,
    video: { facingMode: (front? "user" : "environment") }
@@ -128,8 +140,7 @@ document.getElementById('flip-button').onclick = function() { front = !front; };
 
 var constraints = {
       audio: false,
-      video: { facingMode: (front? "user" : "environment") }
-}
+      video: { facingMode: (front? "user" : "environment") } }
 
 console.log('Getting user media with constraints', constraints);
 
