@@ -118,8 +118,8 @@ function updateBtn() {
 }
 navigator.mediaDevices.getUserMedia({
   audio: false,
-   video: { facingMode: (front? "user" : "environment") }
-})
+   video: { facingMode: (front? "user" : "environment") } })
+
 .then(gotStream)
 .catch(function(e) {
   alert('getUserMedia() error: ' + e.name);
