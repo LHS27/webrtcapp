@@ -17,13 +17,21 @@ video {
       min: 720,
       ideal: 1080,
       max: 1440
-    },
-    
+     }
   }
 
 
 .local {
-  width = 100px;
-  facingMode: 'environment';
+  width: { 
+      min: 1080,
+      ideal: 1920,
+      max: 200,
+    },
+    height: {
+      min: 720,
+      ideal: 1080,
+      max: 1440
+     },
+  facingMode:{ exact = 'environment' };
 }
 }
