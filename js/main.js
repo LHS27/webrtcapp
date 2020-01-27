@@ -129,7 +129,7 @@ document.getElementById('flip-button').onclick = function() { front = !front; };
 var constraints = {
       audio: false,
       video: { facingMode: (front? "user" : "environment") } };
-};
+}
 
 console.log('Getting user media with constraints', constraints);
 
