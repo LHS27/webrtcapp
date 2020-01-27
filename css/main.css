@@ -2,7 +2,12 @@ body {
   font-family: sans-serif;
 }
 
-video {
+.Videoremote {
   max-width: 100%;
   width: 750px;
+}
+
+.Videolocal {
+  max-with : 100%;
+  width : 120px;
 }
