@@ -106,7 +106,7 @@ var remoteVideo = document.querySelector('#remoteVideo');
 
 navigator.mediaDevices.getUserMedia({
   audio: false,
-  video: { facingMode: { exact: "environment" } }
+  video: true,
 })
 .then(gotStream)
 .catch(function(e) {
@@ -123,9 +123,12 @@ function gotStream(stream) {
   }
 }
 
+var front = false;
+document.getElementById('flip-button').onclick = function() { front = !front; };
+
 var constraints = {
-      audio : false;
-      video: { facingMode: { exact: "environment" } }
+      audio: false,
+      video: { facingMode: (front? "user" : "environment") } };
 };
 
 console.log('Getting user media with constraints', constraints);
