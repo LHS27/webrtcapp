@@ -139,8 +139,8 @@ function gotStream(stream) {
 
 
 var constraints = {
-      audio: false,
-      video: facingMode : {exact = 'environment'}
+      audio: false;
+      video: true;
 	  }
 
 console.log('Getting user media with constraints', constraints);
