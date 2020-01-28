@@ -102,7 +102,7 @@ socket.on('message', function(message) {
 
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
-var button = document.querySelector('#button');
+var button = document.getElementById('#button');
 
 button.addEventListener('click', updateBtn);
 
