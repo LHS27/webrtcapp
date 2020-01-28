@@ -104,8 +104,6 @@ var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
 var button = document.getElementById('#button');
 
-button.addEventListener('click', updateBtn);
-
 var constraints = {
       audio: false,
       video: true,
@@ -122,6 +120,8 @@ function updateBtn() {
 
   }
 }
+button.addEventListener('click', updateBtn());
+
 navigator.mediaDevices.getUserMedia({
   audio: false,
 video: true,
