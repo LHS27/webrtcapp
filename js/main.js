@@ -102,8 +102,8 @@ socket.on('message', function(message) {
 
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
-var button = document.getElementById('#button');
-if (button) {
+var bouton = document.getElementById('#button');
+if (bouton) {
 button.addEventListener('click', updateBtn);
 }
 
@@ -113,12 +113,12 @@ var constraints = {
 	  }
 	  
 function updateBtn() {
-  if (button.value === 'Arrêter la caméra') {
-    button.value = 'Démarrer la caméra';
+  if (bouton.value === 'Arrêter la caméra') {
+    bouton.value = 'Démarrer la caméra';
     constraints.video = false;
     navigator.mediaDevices.getUserMedia.video = false;
   } else {
-    button.value = 'Arrêter la caméra';
+    bouton.value = 'Arrêter la caméra';
    constraints.video =  true;
    navigator.mediaDevices.getUserMedia.video = true;
 
