@@ -11,7 +11,7 @@ video {
      width: { 
       min: 1080,
       ideal: 1920,
-      max: 200,
+      max: 2000,
     },
     height: {
       min: 720,
