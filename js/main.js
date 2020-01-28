@@ -113,14 +113,15 @@ function updateBtn() {
     navigator.mediaDevices.getUserMedia.video = false;
   } else {
     button.value = 'Arrêter la caméra';
-   constraints.video = true;
+   constraints.video =  true;
    navigator.mediaDevices.getUserMedia.video = true;
 
   }
 }
 navigator.mediaDevices.getUserMedia({
   audio: false,
-video: true, })
+video: true,
+})
 
 .then(gotStream)
 .catch(function(e) {
@@ -139,8 +140,8 @@ function gotStream(stream) {
 
 
 var constraints = {
-      audio: false;
-      video: true;
+      audio: false,
+      video: true,
 	  }
 
 console.log('Getting user media with constraints', constraints);
