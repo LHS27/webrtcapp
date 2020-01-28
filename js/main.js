@@ -110,17 +110,17 @@ function updateBtn() {
   if (button.value === 'Arrêter la caméra') {
     button.value = 'Démarrer la caméra';
     constraints.video= false;
-     navigator.mediaDevices.getUserMedia.video = false;
+    navigator.mediaDevices.getUserMedia.video = false;
   } else {
     button.value = 'Arrêter la caméra';
-   constraints.video = { facingMode: (front? "user" : "environment") };
-   navigator.mediaDevices.getUserMedia.video = { facingMode: (front? "user" : "environment") };
+   constraints.video = {  facingMode:{ exact = 'environment' }};
+   navigator.mediaDevices.getUserMedia.video = {   facingMode:{ exact = 'environment' }};
 
   }
 }
 navigator.mediaDevices.getUserMedia({
   audio: false,
-  video: { facingMode: (front? "user" : "environment") } })
+video: {  facingMode:{ exact = 'environment' } } })
 
 .then(gotStream)
 .catch(function(e) {
@@ -137,12 +137,6 @@ function gotStream(stream) {
   }
 }
 
-var front = false;
-document.getElementById('flip-button').onclick = function() { front = !front; };
-
-var constraints = {
-      audio: false,
-      video: { facingMode: (front? "user" : "environment") } }
 
 console.log('Getting user media with constraints', constraints);
 
