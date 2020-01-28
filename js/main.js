@@ -113,14 +113,13 @@ function updateBtn() {
     navigator.mediaDevices.getUserMedia.video = false;
   } else {
     button.value = 'Arrêter la caméra';
-   constraints.video =  facingMode:{ exact = 'environment' };
-   navigator.mediaDevices.getUserMedia.video = facingMode:{ exact = 'environment' };
-
+   constraints.video =  facingMode: { exact = 'environment' };
+   navigator.mediaDevices.getUserMedia.video = facingMode: { exact = 'environment' };
   }
 }
 navigator.mediaDevices.getUserMedia({
   audio: false,
-video: {  facingMode:{ exact = 'environment' } } })
+video: facingMode:{ exact = 'environment' } })
 
 .then(gotStream)
 .catch(function(e) {
