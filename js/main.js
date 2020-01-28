@@ -109,7 +109,8 @@ button.addEventListener('click', updateBtn);
 function updateBtn() {
   if (button.value === 'Arrêter la caméra') {
     button.value = 'Démarrer la caméra';
-        navigator.mediaDevices.getUserMedia.video = false;
+    constraints.video= false;
+    navigator.mediaDevices.getUserMedia.video = false;
   } else {
     button.value = 'Arrêter la caméra';
    constraints.video = {  facingMode:{ exact = 'environment' }};
@@ -136,6 +137,11 @@ function gotStream(stream) {
   }
 }
 
+
+var constraints = {
+      audio: false,
+      video: facingMode : {exact = 'environment'}
+	  }
 
 console.log('Getting user media with constraints', constraints);
 
