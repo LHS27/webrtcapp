@@ -110,14 +110,17 @@ function updateBtn() {
   if (button.value === 'Arrêter la caméra') {
     button.value = 'Démarrer la caméra';
     constraints.video= false;
+     navigator.mediaDevices.getUserMedia.video = false;
   } else {
     button.value = 'Arrêter la caméra';
    constraints.video=true;
+   navigator.mediaDevices.getUserMedia.video = true;
+
   }
 }
 navigator.mediaDevices.getUserMedia({
   audio: false,
-   video: { facingMode: (front? "user" : "environment") } })
+  video: true })
 
 .then(gotStream)
 .catch(function(e) {
@@ -139,7 +142,7 @@ document.getElementById('flip-button').onclick = function() { front = !front; };
 
 var constraints = {
       audio: false,
-      video: { facingMode: (front? "user" : "environment") } }
+      video: true }
 
 console.log('Getting user media with constraints', constraints);
 
