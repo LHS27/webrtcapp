@@ -102,33 +102,30 @@ socket.on('message', function(message) {
 
 var localVideo = document.querySelector('#localVideo');
 var remoteVideo = document.querySelector('#remoteVideo');
-var btn = document.getElementById('#button');
-if (btn) {
-btn.addEventListener('click', updateBtn);
+var bouton = document.getElementById('#button');
+if (bouton) {
+button.addEventListener('click', updateBtn);
 }
 
 var constraints = {
       audio: false,
-      video:  facingMode:{ exact = 'environment' } ,
+      video: facingMode: { exact = 'environment' } ,
 	  }
 	  
 function updateBtn() {
-  if (btn.value === 'Arrêter la caméra') {
-    btn.value = 'Démarrer la caméra';
-    constraints.video = false;
-    navigator.mediaDevices.getUserMedia.video = false;
+  if (bouton.value === 'Arrêter la caméra') {
+    bouton.value = 'Démarrer la caméra';
+	  offerToReceiveVideo: false;
   } else {
-    btn.value = 'Arrêter la caméra';
-   constraints.video = facingMode:{ exact = 'environment' } ;
-   navigator.mediaDevices.getUserMedia.video = facingMode:{ exact = 'environment' } ;
-
+    bouton.value = 'Arrêter la caméra';
+	  offerToReceiveVideo: true;
   }
 }
 
 
 navigator.mediaDevices.getUserMedia({
   audio: false,
-video:  facingMode:{ exact = 'environment' },
+video: facingMode: { exact = 'environment' },
 })
 
 .then(gotStream)
