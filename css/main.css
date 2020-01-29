@@ -4,12 +4,11 @@ body {
 }
 
 .remote {
-    width: 75%;
-    height: 75%;
+    width: 65%;
+    height: 65%;
      }
 
 .local {
 	width: 20%;
-    height:20%;
-	video :{ facingMode: { exact : 'environment' } }
+    height: 20%;
 }
