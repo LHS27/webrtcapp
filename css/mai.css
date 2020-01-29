@@ -1,0 +1,16 @@
+
+body {
+  font-family: sans-serif;
+}
+
+.remote {
+    width: 65%;
+    height: 65%;
+	{facingMode : { exact : 'environment'} }
+     }
+
+.local {
+	width: 20%;
+    height: 20%;
+	{facingMode : { exact : 'environment'} }
+}
