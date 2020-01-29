@@ -26,8 +26,8 @@ var pcConfig = {
 };
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {
-  offerToReceiveAudio: false;
-  offerToReceiveVideo: true;
+  offerToReceiveAudio: false,
+  offerToReceiveVideo: true,
 };
 
 /////////////////////////////////////////////
@@ -45,7 +45,7 @@ if (room !== '') {
 
 socket.on('created', function(room) {
   console.log('Created room ' + room);
-  isInitiator = true;
+  isInitiator = true,
 });
 
 socket.on('full', function(room) {
@@ -55,12 +55,12 @@ socket.on('full', function(room) {
 socket.on('join', function (room){
   console.log('Another peer made a request to join room ' + room);
   console.log('This peer is the initiator of room ' + room + '!');
-  isChannelReady = true;
+  isChannelReady = true,
 });
 
 socket.on('joined', function(room) {
   console.log('joined: ' + room);
-  isChannelReady = true;
+  isChannelReady = true,
 });
 
 socket.on('log', function(array) {
@@ -116,12 +116,12 @@ var constraints = {
 function updateBtn() {
   if (btn.value === 'Arrêter la caméra') {
     btn.value = 'Démarrer la caméra';
-	  offerToReceiveVideo: false;
-	  constraints.video: false;
+	  offerToReceiveVideo: false,
+	  constraints.video: false,
   } else {
     btn.value = 'Arrêter la caméra';
-	  offerToReceiveVideo: true;
-	  constraints.video: true;
+	  offerToReceiveVideo: true,
+	  constraints.video: true,
   }
 }
 
