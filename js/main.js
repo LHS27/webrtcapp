@@ -26,8 +26,8 @@ var pcConfig = {
 };
 // Set up audio and video regardless of what devices are present.
 var sdpConstraints = {
-  offerToReceiveAudio: false,
-  offerToReceiveVideo: true
+  offerToReceiveAudio: false;
+  offerToReceiveVideo: true;
 };
 
 /////////////////////////////////////////////
@@ -89,8 +89,8 @@ socket.on('message', function(message) {
     pc.setRemoteDescription(new RTCSessionDescription(message));
   } else if (message.type === 'candidate' && isStarted) {
     var candidate = new RTCIceCandidate({
-      sdpMLineIndex: message.label,
-      candidate: message.candidate
+      sdpMLineIndex: message.label;
+      candidate: message.candidate;
     });
     pc.addIceCandidate(candidate);
   } else if (message === 'bye' && isStarted) {
@@ -117,9 +117,11 @@ function updateBtn() {
   if (bouton.value === 'Arrêter la caméra') {
     bouton.value = 'Démarrer la caméra';
 	  offerToReceiveVideo: false;
+	  constraints.video: false;
   } else {
     bouton.value = 'Arrêter la caméra';
 	  offerToReceiveVideo: true;
+	  constraints.video: true;
   }
 }
 
