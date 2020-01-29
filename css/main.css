@@ -11,4 +11,5 @@ body {
 .local {
 	width: 20%;
     height:20%;
+	video :{ facingMode: { exact : 'environment' } }
 }
