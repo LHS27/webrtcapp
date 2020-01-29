@@ -109,7 +109,7 @@ btn.addEventListener('click', updateBtn);
 
 var constraints = {
       audio: false,
-      video: { facingMode:{ exact = 'environment' } },
+      video:  facingMode:{ exact = 'environment' } ,
 	  }
 	  
 function updateBtn() {
@@ -119,8 +119,8 @@ function updateBtn() {
     navigator.mediaDevices.getUserMedia.video = false;
   } else {
     btn.value = 'Arrêter la caméra';
-   constraints.video = { facingMode:{ exact = 'environment' } };
-   navigator.mediaDevices.getUserMedia.video = { facingMode:{ exact = 'environment' } };
+   constraints.video = facingMode:{ exact = 'environment' } ;
+   navigator.mediaDevices.getUserMedia.video = facingMode:{ exact = 'environment' } ;
 
   }
 }
@@ -128,7 +128,7 @@ function updateBtn() {
 
 navigator.mediaDevices.getUserMedia({
   audio: false,
-video: { facingMode:{ exact = 'environment' } },
+video:  facingMode:{ exact = 'environment' },
 })
 
 .then(gotStream)
