@@ -109,7 +109,8 @@ button.addEventListener('click', updateBtn);
 
 var constraints = {
       audio: false,
-      video: facingMode: { exact = 'environment' } ,
+      video: true,
+	  facingMode: { exact = 'environment' } ,
 	  }
 	  
 function updateBtn() {
@@ -125,7 +126,7 @@ function updateBtn() {
 
 navigator.mediaDevices.getUserMedia({
   audio: false,
-video: facingMode: { exact = 'environment' },
+video: true,
 })
 
 .then(gotStream)
