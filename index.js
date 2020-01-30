@@ -37,6 +37,8 @@ io.sockets.on('connection', function(socket) {
       socket.join(room);
       log('Client ID ' + socket.id + ' created room ' + room);
       socket.emit('created', room, socket.id);
+	  var idClient = [socket.id];
+
 
     } else if (numClients === 1 ) {
       log('Client ID ' + socket.id + ' joined room ' + room);
@@ -44,10 +46,14 @@ io.sockets.on('connection', function(socket) {
       socket.join(room);
       socket.emit('joined', room, socket.id);
       io.sockets.in(room).emit('ready');
+	  var newlength = idClient.push(socket.id);
+
     } else { // max two clients
       socket.emit('full', room);
+	  var newlength = idClient.push(socket.id);
     }
   });
+
 
   socket.on('ipaddr', function() {
     var ifaces = os.networkInterfaces();
