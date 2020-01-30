@@ -4,13 +4,9 @@ body {
 }
 
 .remote {
-    width: 65%;
-    height: 65%;
-	{facingMode : { exact : 'environment'} }
-     }
-
+    width: 55%;
+    height: 55%;
 .local {
 	width: 20%;
     height: 20%;
-	{facingMode : { exact : 'environment'} }
 }
