@@ -4,8 +4,10 @@ body {
 }
 
 .remote {
-    width: 55%;
-    height: 55%;
+    width: 65%;
+    height: 65%;
+     }
+
 .local {
 	width: 20%;
     height: 20%;
