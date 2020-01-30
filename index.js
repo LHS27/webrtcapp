@@ -25,7 +25,7 @@ io.sockets.on('connection', function(socket) {
   socket.on('message', function(message) {
     log('Client said: ', message);
     // for a real app, would be room-only (not broadcast)
-    socket.broadcast.emit('message', message);
+    socket.room-only.emit('message', message);
   });
 
   socket.on('create or join', function(room) {
@@ -47,6 +47,7 @@ io.sockets.on('connection', function(socket) {
       io.sockets.in(room).emit('ready');
     } else { // max two clients
       socket.emit('full', room);
+	  location.replace("http://www.hetb.oxatis.com/");
     }
   });
 
