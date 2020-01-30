@@ -47,7 +47,6 @@ io.sockets.on('connection', function(socket) {
       io.sockets.in(room).emit('ready');
     } else { // max two clients
       socket.emit('full', room);
-	  location.replace("http://www.hetb.oxatis.com/");
     }
   });
 
